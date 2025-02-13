@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حجز موعد قانوني</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>📌 حجز موعد قانوني</h2>
+        <form id="bookingForm">
+            <input type="text" name="first_name" placeholder="الاسم" required>
+            <input type="text" name="last_name" placeholder="اللقب" required>
+            <input type="tel" name="phone" placeholder="رقم الهاتف" required>
+            <input type="email" name="email" placeholder="البريد الإلكتروني" required>
+            <input type="text" name="lawyer_name" placeholder="اسم المحامي" required>
+            <input type="text" name="lawyer_code" placeholder="رمز المحامي" required>
+            <textarea name="message" placeholder="اشرح مشكلتك القانونية" required></textarea>
+            <button type="submit">إرسال الطلب ✅</button>
+        </form>
+        <p id="responseMessage"></p>
+    </div>
+
+    <script>
+        document.getElementById("bookingForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let formData = new FormData(this);
+            let jsonObject = {};
+            formData.forEach((value, key) => { jsonObject[key] = value });
+
+            fetch("/book", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(jsonObject)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("responseMessage").innerText = data.message || data.error;
+            })
+            .catch(error => console.error("خطأ:", error));
+        });
+    </script>
+</body>
+</html>
