@@ -1,9 +1,16 @@
 from flask import Flask, request, jsonify, render_template
 import firebase_admin
 from firebase_admin import credentials, firestore
+import os
+import json
 
-# تحميل مفتاح Firebase
-cred = credentials.Certificate("firebase_credentials.json")
+# تحميل مفتاح Firebase من المتغير البيئي
+firebase_credentials = os.getenv("FIREBASE_CREDENTIALS")
+
+if not firebase_credentials:
+    raise ValueError("⚠️ لم يتم العثور على المتغير FIREBASE_CREDENTIALS في البيئة!")
+
+cred = credentials.Certificate(json.loads(firebase_credentials))
 firebase_admin.initialize_app(cred)
 
 # إنشاء مرجع لقاعدة البيانات
